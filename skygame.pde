@@ -1,17 +1,11 @@
-import gifAnimation.*;
-
-
-
-
 
 
 ArrayList<Balloon> helloBalloons = new ArrayList<Balloon>();
 
-ArrayList<Birdy> birds = new ArrayList<Birdy>();
-
 
 Balloon hell;
 PVector wind, gravity;
+PVector leftWind, rightWind;
 float xoff = 0.0f;
 
 float vx = 0.0f;
@@ -20,45 +14,44 @@ float vy = 0.05f;
 float windLeft = 0.0f;
 float windRight = 0.0f;
 
-int leftClicksInDelta = 0;
-int rightClicksInDelta = 0; 
-
-boolean leftClicked = false;
-boolean rightClicked = false;
 
 int frameCountLeft = 0;
 int frameCountRight = 0;
 
 boolean syncOn = false;
-
-GifAnimation birdy;
-
 PGraphics birdsLayer;
+PGraphics pumpLayer;
 
-
-Birdy b;
 
 Animation birdAnim;
+Animation pumpLeftAnim;
+
+boolean pumpLeftOn = false;
+
+PImage vente;
 
 void setup(){  
   background(255);  
   size(500,500);
-  
+  vente = loadImage("vente_b.png");
   birdsLayer = createGraphics(width,height);
+  pumpLayer = createGraphics(width,height);
   
   birdAnim = new Animation(birdsLayer,"bird_color_green",2,
     width/2,0, 
-    0.0, 1.5f, 
+    0.0, 1.0f, 
     50, 50);
-//  birdsPool.add(birdAnim); 
-  
-//  for(int i=0; i<=5 ; i++){
-//     birds.add(new Birdy(this,100,0.0,0.005f)); 
-//  }
-  b = new Birdy(width/2,0.0f,0.1f);
-  b.loop();
+
+  pumpLeftAnim = new Animation(pumpLayer,"venta0",4,
+    10,10, 
+    0.0, 0.0f, 
+    0, 0);
+
+
   gravity = new PVector(0, 0.007f);
-  wind = new PVector(0.0, 0); 
+  wind = new PVector(0.0, 0);
+  leftWind = new PVector(0.0, 0);
+  rightWind = new PVector(0.0, 0);
 }
 
 
@@ -66,44 +59,59 @@ void draw(){
   background(255);
   
     for (Balloon balloon: helloBalloons) {
-    balloon.update();
-    if (balloon.checkEdges()) {
-      helloBalloons.remove(balloon);
-      Balloon b = new Balloon(random(0,width), 0.0f, 0.0005f);
-      helloBalloons.add(b);
-      wind.set(0.0,0.0);
-      break;
-    }
-    balloon.display();
-    balloon.applyForce(gravity);
-    balloon.applyForce(wind);
-    
+      balloon.update();
+      if (balloon.checkEdges()) {
+        helloBalloons.remove(balloon);
+        Balloon b = new Balloon(70.0, 0.02f, 0.0005f);
+        helloBalloons.add(b);
+        wind.set(0.0,0.0);
+        break;
+      }
+      balloon.display();
+      if (!syncOn){
+        balloon.applyForce(gravity);
+      }
+      balloon.applyForce(wind);
+//      balloon.applyLeftForce(leftWind);
+//      balloon.applyRightForce(rightWind);
   }
 
-//    birdy.play();
       birdsLayer.beginDraw();
       birdsLayer.background(255,0);
       birdAnim.update();
       birdAnim.display();
-//      b.update();
-//      b.display();
       birdsLayer.endDraw();
-    
-//    image(b.getGifAnimation(), 100,100,50,50);
 
+
+      birdsLayer.beginDraw();
+      birdsLayer.background(255,0);
+      birdAnim.update();
+      birdAnim.display();
+      birdsLayer.endDraw();
   
     if (syncOn){
-      wind.set(wind.x,0.01f);
+      wind.set(0.0f,0.0f);
       syncOn = false;
     }
     image(birdsLayer,0,0);
+    if (pumpLeftOn){
+      pumpLayer.beginDraw();
+      pumpLayer.background(255,0);
+      boolean lastFrame = pumpLeftAnim.display();
+      pumpLayer.endDraw();
+      image(pumpLayer,0,0);
+      if (lastFrame){
+         pumpLeftOn = false; 
+      }
+    }else{
+      image(vente,10,10);
+    }
 }
  
 
 
-
 public void mouseClicked() {
-  Balloon b = new Balloon(mouseX, 0.0f, 0.0005f);
+  Balloon b = new Balloon(70, 0.0f, 0.0005f);
   helloBalloons.add(b);
   
 }
@@ -112,23 +120,37 @@ public void mouseClicked() {
 void keyPressed() {
   println("keyPressed="+key);
 
+    float add1 = 0.005f;
+    float add2 = 0.01f;
+    
     if (key == 'z') {
-      wind.add(0.005f,0,0);
+      if (wind.x>=0){
+        wind.add(add1,0,0);
+      }
+      else{
+        wind.add(add2,0,0);
+      }
       frameCountLeft = frameCount;
+      pumpLeftOn = true;
     } else if (key == 'x') {
-      wind.sub(0.005f,0.0f,0);
+      if (wind.x<=0){
+        wind.sub(add1,0,0);
+      }
+      else{
+        wind.sub(add2,0,0);
+      }
       frameCountRight = frameCount;
     } else if (key == 'b') {
-      wind.set(0.0f,0.0f);
+//      wind.set(0.0f,-1.5f);
+      frameCountRight = frameCount;
+      frameCountLeft = frameCount;
+      pumpLeftOn = true;
     } else if (key == 'B') {
-//      Birdy b = birds.get(i);
-//      b.update();
-//      i++;
-//      i = i % 5;
+      
     } 
     
     if ( (Math.abs(frameCountLeft - frameCountRight)<2)){
-      wind.set(0.0f,-0.03f);
+      wind.set(0.0f,-0.05f);
       syncOn = true;
     }
 }

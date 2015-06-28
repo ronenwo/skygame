@@ -69,11 +69,23 @@ class Animation {
   }
 
 
-  void display() {
+  boolean display() {
     frame = getFrameCount() ;
-    layer.image(images[frame], location.x, location.y, dim.x, dim.y);
+    if (dim.x == 0 || dim.y == 0){
+      layer.image(images[frame], location.x, location.y);
+    }
+    else{
+      layer.image(images[frame], location.x, location.y, dim.x, dim.y);
+    }  
+    if (frame == imageCount - 1){
+       return true; 
+    }
+    else{
+       return false; 
+    }
   }
 
+  
   
   int getWidth() {
     return images[0].width;

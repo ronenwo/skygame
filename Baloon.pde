@@ -35,17 +35,26 @@ class Balloon {
     acceleration.add(force);
   }
 
+  public void applyLeftForce(PVector force) {
+//    force.mult((width-location.x)/width,1); 
+//    acceleration.add(location.xforce);
+  }
+
+  public void applyRightForce(PVector force) {
+    acceleration.add(force);
+  }
+
   //when balloon hits the top of the sketch where x <= 0, have bounce back, otherwise if balloon leaves screen delete from the arraylist of balloons
   public boolean checkEdges() {
 //    return false;
     if (location.y >= height) {
       return true;
     }    
-    if (location.x >= width ) {
+    if (location.x >= (width -20)) {
       velocity.x *= -1.0f;      
       return false;
     }
-    if (location.x <= 0) {
+    if (location.x <= 20) {
       velocity.x *= -1.0f;      
       return false;
     }

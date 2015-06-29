@@ -5,9 +5,10 @@ class Animation {
   int frame;
   int tick;
   float targetX, targetY;
-  
-  PVector location, velocity, acceleration;  
-  PVector dim;
+  public PVector location, dim;
+  PVector velocity, acceleration;  
+
+  public boolean enable = true;
   
   Animation(PGraphics layer, String imagePrefix, int count, 
     float x, float y, 
@@ -39,12 +40,23 @@ class Animation {
   }
 
   public void update() {
+    if (!enable){
+       return; 
+    }
     velocity.add(acceleration);
     location.add(velocity);
     acceleration.mult(0);
     if (location.y >= height){
        reset();  
     }
+  }
+
+  public void updateReset(){
+     reset(); 
+  }
+  
+  public void updateLocation(float x, float y){
+     location.set(x,y); 
   }
 
 
@@ -70,6 +82,9 @@ class Animation {
 
 
   boolean display() {
+    if (!enable){
+       return false; 
+    }
     frame = getFrameCount() ;
     if (dim.x == 0 || dim.y == 0){
       layer.image(images[frame], location.x, location.y);

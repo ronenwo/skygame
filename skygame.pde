@@ -25,15 +25,20 @@ PGraphics pumpLayer;
 
 Animation birdAnim;
 Animation pumpLeftAnim;
+Animation birdInBalloonAnim;
 
 boolean pumpLeftOn = false;
 
 PImage vente;
 
+PImage birdInBalloon;
+
 void setup(){  
   background(255);  
   size(500,500);
   vente = loadImage("venta000001.png");
+  birdInBalloon = loadImage("balloon1.png");
+  
   birdsLayer = createGraphics(width,height);
   pumpLayer = createGraphics(width,height);
   
@@ -42,10 +47,20 @@ void setup(){
     0.0, 1.0f, 
     50, 50);
 
+  birdInBalloonAnim = new Animation(birdsLayer,"balloon",1,
+    0,0, 
+    0.0, -1.0f, 
+    50, 74);
+
+
+  birdInBalloonAnim.enable = false;
+
   pumpLeftAnim = new Animation(pumpLayer,"venta00000",4,
     10,10, 
     0.0, 0.0f, 
     0, 0);
+    
+  
 
 
   gravity = new PVector(0, 0.007f);
@@ -57,7 +72,7 @@ void setup(){
 
 void draw(){
   background(255);
-  
+    
     for (Balloon balloon: helloBalloons) {
       balloon.update();
       if (balloon.checkEdges()) {
@@ -66,6 +81,13 @@ void draw(){
         helloBalloons.add(b);
         wind.set(0.0,0.0);
         break;
+      }
+      if (rectRect(balloon.location.x,balloon.location.y,balloon.mwidth,balloon.mheight,
+                    birdAnim.getX(), birdAnim.getY(),birdAnim.dim.x,birdAnim.dim.y)){
+         birdInBalloonAnim.updateLocation(birdAnim.getX(), birdAnim.getY()); 
+         birdInBalloonAnim.enable = true;
+         birdAnim.updateReset();
+         balloon.enable = false;
       }
       balloon.display();
       if (!syncOn){
@@ -80,14 +102,10 @@ void draw(){
       birdsLayer.background(255,0);
       birdAnim.update();
       birdAnim.display();
+      birdInBalloonAnim.update();
+      birdInBalloonAnim.display();
       birdsLayer.endDraw();
 
-
-      birdsLayer.beginDraw();
-      birdsLayer.background(255,0);
-      birdAnim.update();
-      birdAnim.display();
-      birdsLayer.endDraw();
   
     if (syncOn){
       wind.set(0.0f,0.0f);
@@ -108,6 +126,20 @@ void draw(){
     }
 }
  
+
+// RECTANGLE/RECTANGLE
+boolean rectRect(float r1x, float r1y, float r1w, float r1h, float r2x, float r2y, float r2w, float r2h) {
+  
+  // are the sides of one rectangle touching the other?
+  
+  if (r1x + r1w >= r2x &&    // r1 right edge past r2 left
+      r1x <= r2x + r2w &&    // r1 left edge past r2 right
+      r1y + r1h >= r2y &&    // r1 top edge past r2 bottom
+      r1y <= r2y + r2h) {    // r1 bottom edge past r2 top
+        return true;
+  }
+  return false;
+}
 
 
 public void mouseClicked() {

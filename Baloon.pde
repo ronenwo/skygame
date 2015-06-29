@@ -2,7 +2,13 @@
 //Can you add a wind force that changes over time, perhaps according to Perlin noise?
 class Balloon {
 
-  PVector location, velocity, acceleration;  
+  public static final float mwidth = 50;
+  public static final float mheight = 74;
+  
+  public boolean enable = true;
+  
+  public PVector location;
+  PVector velocity, acceleration;    
 
   Balloon(float _x) {
     location = new PVector(_x, 0);
@@ -18,13 +24,17 @@ class Balloon {
 
 
   public void display() {
+    if (!enable){
+       return; 
+    }
     fill(255, 0, 0);
     smooth();
     noStroke();
-    ellipse(location.x, location.y, 50, 65);
+    ellipse(location.x, location.y, mwidth, mheight);
 //    fill(0);
 //    triangle(location.x - 20,location.y,location.x,location.y,location.x + 20,location.y);    
   }
+  
   public void update() {
     velocity.add(acceleration);
     location.add(velocity);

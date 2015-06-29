@@ -33,7 +33,7 @@ PImage vente;
 void setup(){  
   background(255);  
   size(500,500);
-  vente = loadImage("vente_b.png");
+  vente = loadImage("venta000001.png");
   birdsLayer = createGraphics(width,height);
   pumpLayer = createGraphics(width,height);
   
@@ -42,7 +42,7 @@ void setup(){
     0.0, 1.0f, 
     50, 50);
 
-  pumpLeftAnim = new Animation(pumpLayer,"venta0",4,
+  pumpLeftAnim = new Animation(pumpLayer,"venta00000",4,
     10,10, 
     0.0, 0.0f, 
     0, 0);

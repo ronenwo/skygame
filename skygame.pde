@@ -21,6 +21,7 @@ int frameCountRight = 0;
 boolean syncOn = false;
 PGraphics birdsLayer;
 PGraphics pumpLayer;
+PGraphics nestLayer;
 
 
 Animation birdAnim;
@@ -33,19 +34,26 @@ PImage vente;
 
 PImage birdInBalloon;
 
+PImage nest;
+PImage mummyBird;
+
+
 void setup(){  
   background(255);  
   size(500,500);
   vente = loadImage("venta000001.png");
   birdInBalloon = loadImage("balloon1.png");
+  nest = loadImage("nest02.png");
+  mummyBird = loadImage("mummybird01.png");
   
   birdsLayer = createGraphics(width,height);
   pumpLayer = createGraphics(width,height);
+  nestLayer = createGraphics(width,height);
   
-  birdAnim = new Animation(birdsLayer,"bird_color_green",2,
-    width/2,0, 
+  birdAnim = new Animation(birdsLayer,"green_bird0",2,
+    160,50, 
     0.0, 1.0f, 
-    50, 50);
+    80, 56);
 
   birdInBalloonAnim = new Animation(birdsLayer,"balloon",1,
     0,0, 
@@ -111,6 +119,13 @@ void draw(){
       wind.set(0.0f,0.0f);
       syncOn = false;
     }
+
+    nestLayer.beginDraw();
+    nestLayer.background(255,0);
+//    nestLayer.image(mummyBird,180,-10,100,75);
+    nestLayer.image(nest,150,-12,200,150);
+    nestLayer.endDraw();
+    image(nestLayer,0,0);    
     image(birdsLayer,0,0);
     if (pumpLeftOn){
       pumpLayer.beginDraw();

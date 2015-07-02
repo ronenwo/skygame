@@ -25,12 +25,14 @@ PGraphics nestLayer;
 
 
 Animation birdAnim;
-Animation pumpLeftAnim;
+Animation pumpLeftAnim, pumpRightAnim;
 Animation birdInBalloonAnim;
 
 boolean pumpLeftOn = false;
+boolean pumpRightOn = false;
 
-PImage vente;
+
+PImage venteL, venteR;
 
 PImage birdInBalloon;
 
@@ -41,7 +43,8 @@ PImage mummyBird;
 void setup(){  
   background(255);  
   size(500,500);
-  vente = loadImage("venta000001.png");
+  venteL = loadImage("venta000001.png");
+  venteR = loadImage("ventaR000001.png");
   birdInBalloon = loadImage("balloon1.png");
   nest = loadImage("nest02.png");
   mummyBird = loadImage("mummybird01.png");
@@ -68,6 +71,10 @@ void setup(){
     0.0, 0.0f, 
     0, 0);
     
+  pumpRightAnim = new Animation(pumpLayer,"ventaR00000",4,
+    368,10, 
+    0.0, 0.0f, 
+    0, 0);
   
 
 
@@ -137,7 +144,19 @@ void draw(){
          pumpLeftOn = false; 
       }
     }else{
-      image(vente,10,10);
+      image(venteL,10,10);
+    }
+    if (pumpRightOn){
+      pumpLayer.beginDraw();
+      pumpLayer.background(255,0);
+      boolean lastFrame = pumpRightAnim.display();
+      pumpLayer.endDraw();
+      image(pumpLayer,0,0);
+      if (lastFrame){
+         pumpRightOn = false; 
+      }
+    }else{
+      image(venteR,368,10);
     }
 }
  
@@ -170,7 +189,7 @@ void keyPressed() {
     float add1 = 0.005f;
     float add2 = 0.01f;
     
-    if (key == 'z') {
+    if (key == 'z' || key == 'n') {
       if (wind.x>=0){
         wind.add(add1,0,0);
       }
@@ -179,7 +198,7 @@ void keyPressed() {
       }
       frameCountLeft = frameCount;
       pumpLeftOn = true;
-    } else if (key == 'x') {
+    } else if (key == 'x' || key == 'm') {
       if (wind.x<=0){
         wind.sub(add1,0,0);
       }
@@ -187,13 +206,18 @@ void keyPressed() {
         wind.sub(add2,0,0);
       }
       frameCountRight = frameCount;
-    } else if (key == 'b') {
+      pumpRightOn = true;
+    } else if (key == 's') {
 //      wind.set(0.0f,-1.5f);
+      // both pumps at sync
       frameCountRight = frameCount;
       frameCountLeft = frameCount;
       pumpLeftOn = true;
-    } else if (key == 'B') {
-      
+      pumpRightOn = true;
+    } else if (key == 'a') {
+      // new balloon
+    } else if (key == 'i'){
+      // new bird  
     } 
     
     if ( (Math.abs(frameCountLeft - frameCountRight)<2)){
